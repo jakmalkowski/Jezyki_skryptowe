@@ -1,0 +1,61 @@
+projects:
+  - name: url-shortener
+    environmens:
+      - name: development
+        services:
+          - type: web
+            plan: free
+            name: url-shortener-backend-dev
+            runtime: python
+            repo:
+            branch: main
+            autoDeployTrigger: commit
+            buildCommand: pip install -r backend/requirements.txt
+            startCommand: gunicorn -w 2 -b 0.0.0.0:$PORT backend.app:app
+            healthCheckPath: /health
+            envVars:
+              - key: PYTHON_VERSION
+                value: 3.13.0
+              - key: CORS_ALLOW_ALL
+                value: "true"
+          - type: web
+            plan: free
+            name: url-shortener-frontend-dev
+            runtime: static
+            repo:
+            branch: main
+            autoDeployTrigger: commit
+            buildCommand: cd frontend && npm install && npm run build
+            staticPublishPath: frontend/dist
+            envVars:
+              - key: BASE_URL_DEV
+                value: https:<backend-dev-host>
+      - name: production
+        services:
+          - type: web
+            plan: free
+            name: url-shortener-backend-prod
+            runtime: python
+            repo:
+            branch: main
+            autoDeployTrigger: commit
+            buildCommand: pip install -r backend/requirements.txt
+            startCommand: gunicorn -w 2 -b 0.0.0.0:$PORT backend.app:app
+            healthCheckPath: /health
+            envVars:
+              - key: PYTHON_VERSION
+                value: 3.13.0
+              - key: CORS_ALLOW_ALL
+                value: "true"
+          - type: web
+            plan: free
+            name: url-shortener-frontend-prod
+            runtime: static
+            repo:
+            branch: main
+            autoDeployTrigger: commit
+            buildCommand: cd frontend && npm install && npm run build
+            staticPublishPath: frontend/dist
+            envVars:
+              - key: BASE_URL_PROD
+                value: https:<backend-prod-host>
