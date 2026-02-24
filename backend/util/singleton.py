@@ -4,7 +4,7 @@ from typing import Type, Any
 
 def singleton(cls: Type[Any]) -> Type[Any]:
     """Decorator that enforces the singleton pattern.
-
+    
     Classes decorated with @singleton must be initialized via get_instance().
     Direct instantiation via __init__ is blocked.
     """
@@ -21,7 +21,6 @@ def singleton(cls: Type[Any]) -> Type[Any]:
             return instances[cls]
 
     def reset_instance():
-        """Remove the singleton instance (useful for testing)."""
         with lock:
             instances.pop(cls, None)
 

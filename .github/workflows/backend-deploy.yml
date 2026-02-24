@@ -1,0 +1,32 @@
+name: Manual backend deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to deploy to"
+        required: true
+        type: choice
+        options:
+          - development
+          - production
+        default: "development"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Trigger dev deploy
+        if: ${{ inputs.environment == 'development' }}
+        env:
+          RENDER_BACKEND_DEV_HOOK: ${{ secrets.RENDER_BACKEND_DEV_HOOK }}
+        run: bash ops/backend/deploy-dev.sh
+
+      - name: Trigger prod deploy
+        if: ${{ inputs.environment == 'production' }}
+        env:
+          RENDER_BACKEND_PROD_HOOK: ${{ secrets.RENDER_BACKEND_PROD_HOOK }}
+        run: bash ops/backend/deploy-prod.sh

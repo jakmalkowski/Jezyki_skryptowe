@@ -1,6 +1,6 @@
 projects:
   - name: url-shortener
-    environmens:
+    environments:
       - name: development
         services:
           - type: web
@@ -11,13 +11,13 @@ projects:
             branch: main
             autoDeployTrigger: commit
             buildCommand: pip install -r backend/requirements.txt
-            startCommand: gunicorn -w 2 -b 0.0.0.0:$PORT backend.app:app
+            startCommand: gunicorn -w 2 -b 0.0.0.0:$PORT --chdir backend app:app
             healthCheckPath: /health
             envVars:
               - key: PYTHON_VERSION
                 value: 3.13.0
-              - key: CORS_ALLOW_ALL
-                value: "true"
+              - key: CORS_ORIGINS
+                value: "*"
           - type: web
             plan: free
             name: url-shortener-frontend-dev
@@ -25,11 +25,11 @@ projects:
             repo:
             branch: main
             autoDeployTrigger: commit
-            buildCommand: cd frontend && npm install && npm run build
+            buildCommand: cd frontend && npm install && VITE_API_URL="$BASE_URL_DEV" npm run build
             staticPublishPath: frontend/dist
             envVars:
               - key: BASE_URL_DEV
-                value: https:<backend-dev-host>
+                value: https://<backend-dev-host>
       - name: production
         services:
           - type: web
@@ -40,13 +40,13 @@ projects:
             branch: main
             autoDeployTrigger: commit
             buildCommand: pip install -r backend/requirements.txt
-            startCommand: gunicorn -w 2 -b 0.0.0.0:$PORT backend.app:app
+            startCommand: gunicorn -w 2 -b 0.0.0.0:$PORT --chdir backend app:app
             healthCheckPath: /health
             envVars:
               - key: PYTHON_VERSION
                 value: 3.13.0
-              - key: CORS_ALLOW_ALL
-                value: "true"
+              - key: CORS_ORIGINS
+                value: "*"
           - type: web
             plan: free
             name: url-shortener-frontend-prod
@@ -54,8 +54,8 @@ projects:
             repo:
             branch: main
             autoDeployTrigger: commit
-            buildCommand: cd frontend && npm install && npm run build
+            buildCommand: cd frontend && npm install && VITE_API_URL="$BASE_URL_PROD" npm run build
             staticPublishPath: frontend/dist
             envVars:
               - key: BASE_URL_PROD
-                value: https:<backend-prod-host>
+                value: https://<backend-dev-host>
