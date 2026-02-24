@@ -52,3 +52,15 @@ jobs:
         run: pip install -r backend/requirements.txt
       - name: Run smoke test
         run: bash ops/backend/smoke.sh
+
+  deploy_dev:
+    runs-on: ubuntu-latest
+    needs: smoke
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Trigger dev deploy
+        env:
+          RENDER_BACKEND_DEV_HOOK: ${{ secrets.RENDER_BACKEND_DEV_HOOK }}
+        run: bash ops/backend/deploy-dev.sh
