@@ -4,7 +4,7 @@ Simple URL shortener app with:
 - Backend: Python + Flask
 - Frontend: Vue 3 + Vite
 - CI/CD: GitHub Actions + bash scripts
-- Deploy: Render (separate backend + frontend services)
+- Deploy: Render (separate backend + frontend services) with dev and prod environments
 
 ## Project Structure
 
